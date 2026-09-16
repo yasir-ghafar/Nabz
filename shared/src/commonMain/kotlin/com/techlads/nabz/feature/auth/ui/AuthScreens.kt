@@ -111,7 +111,7 @@ private fun RoleCard(
 }
 
 @Composable
-fun SignInScreen(onSignedIn: () -> Unit) {
+fun SignInScreen(onSignedIn: (phone: String) -> Unit) {
     var phone by remember { mutableStateOf("") }
     var otp by remember { mutableStateOf("") }
     Column(
@@ -131,13 +131,13 @@ fun SignInScreen(onSignedIn: () -> Unit) {
         Spacer(Modifier.height(12.dp))
         NabzTextField(otp, { otp = it }, "One-time code")
         Spacer(Modifier.height(24.dp))
-        NabzPrimaryButton("Continue", onSignedIn)
+        NabzPrimaryButton("Continue", onClick = { onSignedIn(phone) })
         Spacer(Modifier.height(12.dp))
-        NabzGhostButton("Continue as guest", onSignedIn)
+        NabzGhostButton("Continue as guest", onClick = { onSignedIn(phone) })
         Spacer(Modifier.weight(1f))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             Text("New to Nabz? ", color = NabzColors.Muted, style = MaterialTheme.typography.bodyMedium)
-            Text("Create profile", color = NabzColors.Crimson, style = MaterialTheme.typography.labelLarge, modifier = Modifier.clickable(onClick = onSignedIn))
+            Text("Create profile", color = NabzColors.Crimson, style = MaterialTheme.typography.labelLarge, modifier = Modifier.clickable(onClick = { onSignedIn(phone) }))
         }
         Spacer(Modifier.height(8.dp))
     }

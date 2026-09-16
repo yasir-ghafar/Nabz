@@ -9,12 +9,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.techlads.nabz.core.designsystem.NabzTheme
 import com.techlads.nabz.core.designsystem.component.MainTab
 import com.techlads.nabz.core.model.Donor
+import com.techlads.nabz.core.model.UserProfile
 import com.techlads.nabz.feature.auth.ui.SignInScreen
 import com.techlads.nabz.feature.auth.ui.WelcomeScreen
 import com.techlads.nabz.feature.donors.ui.DonorProfileScreen
 import com.techlads.nabz.feature.main.ui.MainShell
 import com.techlads.nabz.feature.notifications.ui.NotificationsScreen
 import com.techlads.nabz.feature.onboarding.ui.OnboardingScreen
+import com.techlads.nabz.feature.profile.ui.EditProfileScreen
 import com.techlads.nabz.feature.request.ui.RequestSentScreen
 import com.techlads.nabz.feature.splash.ui.SplashScreen
 
@@ -23,6 +25,7 @@ private sealed interface Route {
     data object Onboarding : Route
     data object Welcome : Route
     data object SignIn : Route
+    data class EditProfile(val isOnboarding: Boolean) : Route
     data object Main : Route
     data class DonorProfile(val donor: Donor) : Route
     data object Notifications : Route
@@ -35,18 +38,42 @@ fun App() {
     NabzTheme {
         var route by remember { mutableStateOf<Route>(Route.Splash) }
         var tab by remember { mutableStateOf(MainTab.Home) }
+        var profile by remember { mutableStateOf(UserProfile.Empty) }
 
         when (val current = route) {
             Route.Splash -> SplashScreen { route = Route.Onboarding }
             Route.Onboarding -> OnboardingScreen { route = Route.Welcome }
             Route.Welcome -> WelcomeScreen { route = Route.SignIn }
-            Route.SignIn -> SignInScreen { route = Route.Main }
+            Route.SignIn -> SignInScreen { phone ->
+                profile = profile.copy(phone = phone)
+                route = Route.EditProfile(isOnboarding = true)
+            }
+            is Route.EditProfile -> EditProfileScreen(
+                profile = profile,
+                isOnboarding = current.isOnboarding,
+                onSave = { updated ->
+                    profile = updated
+                    if (current.isOnboarding) {
+                        tab = MainTab.Home
+                    } else {
+                        tab = MainTab.Profile
+                    }
+                    route = Route.Main
+                },
+                onBack = { route = Route.Main },
+                onSkip = {
+                    tab = MainTab.Home
+                    route = Route.Main
+                },
+            )
             Route.Main -> MainShell(
+                profile = profile,
                 tab = tab,
                 onTab = { tab = it },
                 onOpenNotifications = { route = Route.Notifications },
                 onOpenDonor = { route = Route.DonorProfile(it) },
                 onRequestSubmitted = { route = Route.RequestSent },
+                onEditProfile = { route = Route.EditProfile(isOnboarding = false) },
             )
             is Route.DonorProfile -> DonorProfileScreen(
                 donor = current.donor,

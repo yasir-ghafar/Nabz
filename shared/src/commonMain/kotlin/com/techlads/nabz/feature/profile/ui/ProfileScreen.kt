@@ -26,9 +26,13 @@ import com.techlads.nabz.core.designsystem.NabzColors
 import com.techlads.nabz.core.designsystem.component.BloodTypeBadge
 import com.techlads.nabz.core.designsystem.component.InitialsAvatar
 import com.techlads.nabz.core.designsystem.icon.NabzIcons
+import com.techlads.nabz.core.model.UserProfile
 
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(
+    profile: UserProfile,
+    onEditProfile: () -> Unit,
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -47,13 +51,13 @@ fun ProfileScreen() {
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            InitialsAvatar("Ayesha Khan", size = 64.dp)
+            InitialsAvatar(profile.displayName, size = 64.dp)
             Spacer(Modifier.width(14.dp))
             Column(Modifier.weight(1f)) {
-                Text("Ayesha Khan", style = MaterialTheme.typography.titleLarge)
-                Text("Gulberg, Lahore", style = MaterialTheme.typography.bodySmall, color = NabzColors.Muted)
+                Text(profile.displayName, style = MaterialTheme.typography.titleLarge)
+                Text(profile.locationLabel, style = MaterialTheme.typography.bodySmall, color = NabzColors.Muted)
             }
-            BloodTypeBadge("O+")
+            BloodTypeBadge(profile.bloodType)
         }
         Spacer(Modifier.height(12.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -68,6 +72,7 @@ fun ProfileScreen() {
                 .clip(RoundedCornerShape(18.dp))
                 .background(NabzColors.Surface),
         ) {
+            ProfileRow(NabzIcons.Person, "Edit profile", onEditProfile)
             ProfileRow(NabzIcons.Calendar, "Donation history")
             ProfileRow(NabzIcons.Bell, "Alerts & requests")
             ProfileRow(NabzIcons.Shield, "Medical profile")
@@ -91,11 +96,11 @@ private fun ImpactStat(value: String, label: String, modifier: Modifier = Modifi
 }
 
 @Composable
-private fun ProfileRow(icon: ImageVector, title: String) {
+private fun ProfileRow(icon: ImageVector, title: String, onClick: () -> Unit = {}) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { }
+            .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

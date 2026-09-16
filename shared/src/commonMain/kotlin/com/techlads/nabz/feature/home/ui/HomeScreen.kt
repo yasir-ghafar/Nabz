@@ -37,9 +37,11 @@ import com.techlads.nabz.core.designsystem.component.RequestCard
 import com.techlads.nabz.core.designsystem.component.SectionHeader
 import com.techlads.nabz.core.designsystem.icon.NabzIcons
 import com.techlads.nabz.core.model.SampleData
+import com.techlads.nabz.core.model.UserProfile
 
 @Composable
 fun HomeScreen(
+    profile: UserProfile = UserProfile.Empty,
     onOpenNotifications: () -> Unit = {},
     onOpenDonors: () -> Unit = {},
     onOpenRequest: () -> Unit = {},
@@ -52,7 +54,7 @@ fun HomeScreen(
             .background(NabzColors.Cream)
             .verticalScroll(rememberScrollState()),
     ) {
-        HomeHeader(onOpenNotifications)
+        HomeHeader(profile, onOpenNotifications)
         Column(Modifier.padding(top = 16.dp)) {
             EligibilityCard()
             Spacer(Modifier.height(18.dp))
@@ -81,7 +83,7 @@ fun HomeScreen(
 }
 
 @Composable
-private fun HomeHeader(onOpenNotifications: () -> Unit) {
+private fun HomeHeader(profile: UserProfile, onOpenNotifications: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -92,7 +94,7 @@ private fun HomeHeader(onOpenNotifications: () -> Unit) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
                 Text("Good afternoon", style = MaterialTheme.typography.bodyMedium, color = NabzColors.Surface.copy(alpha = 0.8f))
-                Text("Ayesha Khan", style = MaterialTheme.typography.headlineSmall, color = NabzColors.Surface)
+                Text(profile.displayName, style = MaterialTheme.typography.headlineSmall, color = NabzColors.Surface)
             }
             IconCircle(
                 icon = NabzIcons.Bell,
@@ -105,7 +107,7 @@ private fun HomeHeader(onOpenNotifications: () -> Unit) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(NabzIcons.Pin, contentDescription = null, tint = NabzColors.Surface, modifier = Modifier.size(16.dp))
             Spacer(Modifier.width(6.dp))
-            Text("Gulberg, Lahore", style = MaterialTheme.typography.labelLarge, color = NabzColors.Surface)
+            Text(profile.locationLabel, style = MaterialTheme.typography.labelLarge, color = NabzColors.Surface)
             Spacer(Modifier.weight(1f))
             Box(
                 modifier = Modifier
@@ -113,7 +115,7 @@ private fun HomeHeader(onOpenNotifications: () -> Unit) {
                     .background(NabzColors.Surface.copy(alpha = 0.16f))
                     .padding(horizontal = 12.dp, vertical = 6.dp),
             ) {
-                Text("O+ donor", color = NabzColors.Surface, style = MaterialTheme.typography.labelLarge)
+                Text("${profile.bloodType} donor", color = NabzColors.Surface, style = MaterialTheme.typography.labelLarge)
             }
         }
     }
