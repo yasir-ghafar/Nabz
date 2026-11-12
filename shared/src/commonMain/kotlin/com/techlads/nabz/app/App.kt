@@ -10,6 +10,7 @@ import com.techlads.nabz.core.designsystem.NabzTheme
 import com.techlads.nabz.core.designsystem.component.MainTab
 import com.techlads.nabz.core.model.Donor
 import com.techlads.nabz.core.model.UserProfile
+import com.techlads.nabz.feature.auth.ui.RegisterScreen
 import com.techlads.nabz.feature.auth.ui.SignInScreen
 import com.techlads.nabz.feature.auth.ui.WelcomeScreen
 import com.techlads.nabz.feature.donors.ui.DonorProfileScreen
@@ -25,6 +26,7 @@ private sealed interface Route {
     data object Onboarding : Route
     data object Welcome : Route
     data object SignIn : Route
+    data object Register : Route
     data class EditProfile(val isOnboarding: Boolean) : Route
     data object Main : Route
     data class DonorProfile(val donor: Donor) : Route
@@ -44,10 +46,17 @@ fun App() {
             Route.Splash -> SplashScreen { route = Route.Onboarding }
             Route.Onboarding -> OnboardingScreen { route = Route.Welcome }
             Route.Welcome -> WelcomeScreen { route = Route.SignIn }
-            Route.SignIn -> SignInScreen { phone ->
-                profile = profile.copy(phone = phone)
-                route = Route.EditProfile(isOnboarding = true)
-            }
+            Route.SignIn -> SignInScreen(
+                onSignedIn = { phone ->
+                    profile = profile.copy(phone = phone)
+                    route = Route.EditProfile(isOnboarding = true)
+                },
+                onRegister = { route = Route.Register },
+            )
+            Route.Register -> RegisterScreen(
+                onRegister = { route = Route.EditProfile(isOnboarding = true) },
+                onSignIn = { route = Route.SignIn },
+            )
             is Route.EditProfile -> EditProfileScreen(
                 profile = profile,
                 isOnboarding = current.isOnboarding,
