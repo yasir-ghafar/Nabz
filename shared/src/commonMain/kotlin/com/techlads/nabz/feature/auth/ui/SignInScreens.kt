@@ -32,6 +32,7 @@ import com.techlads.nabz.core.designsystem.component.PulseLogo
 fun SignInScreen(
     onSignedIn: (phone: String) -> Unit,
     onCreateProfile: () -> Unit = {},
+    onGuest: () -> Unit,
     onRegister:() -> Unit = {},
 ) {
     var phone by remember { mutableStateOf("") }
@@ -57,7 +58,7 @@ fun SignInScreen(
         Spacer(Modifier.height(24.dp))
         NabzPrimaryButton("Continue", onClick = { onSignedIn(phone) })
         Spacer(Modifier.height(12.dp))
-        NabzGhostButton("Continue as guest", onClick = { onSignedIn(phone) })
+        NabzGhostButton("Continue as guest", onClick = { onGuest() })
         Spacer(Modifier.weight(1f))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             Text("New to Nabz? ", color = NabzColors.Muted, style = MaterialTheme.typography.bodyMedium)

@@ -52,6 +52,7 @@ fun App() {
                     route = Route.EditProfile(isOnboarding = true)
                 },
                 onRegister = { route = Route.Register },
+                onGuest = {route = Route.Main }
             )
             Route.Register -> RegisterScreen(
                 onRegister = { route = Route.EditProfile(isOnboarding = true) },
